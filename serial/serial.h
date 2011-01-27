@@ -16,6 +16,25 @@
 #define SERIAL_BUFFER_SIZE 64
 #endif
 
+#if defined(__AVR_ATtiny2313__)
+	#define SERIAL_PORTS 1
+#elif defined(__AVR_ATmega48__)      || \
+	defined(__AVR_ATmega88__)      || \
+	defined(__AVR_ATmega168__)	
+	#define SERIAL_R_QUALIFIED
+	#define SERIAL_PORTS 1
+#elif defined(__AVR_ATmega644__)
+#elif defined(__AVR_ATmega644P__)    || \
+	defined(__AVR_ATmega644PA__)   || \
+	defined(__AVR_ATmega1284P__)
+	#define SERIAL_R_QUALIFIED
+	#define SERIAL_V_QUALIFIED
+	#define SERIAL_PORTS 2
+#else
+#error Serial library does not currently support your MCU!  Please verify that MMCU is set correctly.
+#endif
+
+
 struct ring {
 	//Just like a snake eating something and pooping it out...
 	volatile uint8_t head;  //You put data into head...
@@ -41,13 +60,14 @@ struct ring {
  *  interruptsEnabled: if true, enable interrupts for Rx Complete, Tx Complete, and 
  *       USART Data Register Empty
  */
+void serial_n_init(uint8_t port, uint32_t baud, uint8_t data, uint8_t parity, uint8_t stopBits);
 void serial_init(uint32_t baud, uint8_t data, uint8_t parity, uint8_t stopBits);
-
 
 /*
  * Simplified init method which only asks for baud, and gives sane defaults for the rest.
  * Implementations should call serial_init with values baud, 8, 0, 1.
  */
+void serial_n_init_b(uint8_t port, uint32_t baud);
 void serial_init_b(uint32_t baud);
 
 /*
@@ -55,6 +75,15 @@ void serial_init_b(uint32_t baud);
  * the function will write a single byte to that pointer.  If the read was successful,
  * return 1; otherwise return 0.  Implementations MAY block until a byte is received.
  */
+uint8_t serial_n_read_c(uint8_t port, char *c);
+uint8_t serial_read_c(char *c);
+
+/*
+ * Reads a single character from the serial port.  Pass in a pointer to a byte, and
+ * the function will write a single byte to that pointer.  If the read was successful,
+ * return 1; otherwise return 0.  Implementations MAY block until a byte is received.
+ */
+uint8_t serial_n_read_c(uint8_t port, char *c);
 uint8_t serial_read_c(char *c);
 
 /*
@@ -63,18 +92,21 @@ uint8_t serial_read_c(char *c);
  * The character after the last read character will be null terminated (which is why
  * the most you can read is length - 1).
  */
+uint8_t serial_n_read_s(uint8_t port, char *s, uint8_t len);
 uint8_t serial_read_s(char *s, uint8_t len);
 
 /*
  * Writes a string to the serial port.  Implementations MAY block until
  * all bytes are written.
  */
-void serial_write_s(char *data);
+void serial_n_write_s(uint8_t port, char *data);
+void serial_write(char *data);
 
 /*
  * Writes a single byte to the serial port.  Implementations MAY block until the 
  * write is completed.
  */
+void serial_n_write_c(uint8_t port, char data);
 void serial_write_c(char data);
 
 /*
@@ -82,6 +114,7 @@ void serial_write_c(char data);
  * returns non-zero when there are any bytes avilable.  Implementations MUST NOT block.
  * Implementations MAY return the total number of bytes available.
  */
+uint8_t serial_n_available(uint8_t port);
 uint8_t serial_available();
 
 #endif
