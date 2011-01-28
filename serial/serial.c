@@ -56,7 +56,7 @@ static inline void _serial_n_init(uint8_t port, uint32_t baud, uint8_t data_bits
 }
 void serial_n_init(uint8_t port, uint32_t baud, uint8_t data_bits, uint8_t parity, uint8_t stop_bits){
 
-#ifndef SERIAL_QUALIFIED
+#ifndef SERIAL_R_QUALIFIED
 	_serial_n_init(port, baud, data_bits, parity, stop_bits,
 					&UBRRH, &UBRRH, 
 					&UCSRA, U2X, MPCM, 
