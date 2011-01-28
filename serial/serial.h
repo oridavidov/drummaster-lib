@@ -17,19 +17,60 @@
 #endif
 
 #if defined(__AVR_ATtiny2313__)
-	#define SERIAL_PORTS 1
-#elif defined(__AVR_ATmega48__)      || \
-	defined(__AVR_ATmega88__)      || \
-	defined(__AVR_ATmega168__)	
-	#define SERIAL_R_QUALIFIED
-	#define SERIAL_PORTS 1
-#elif defined(__AVR_ATmega644__)
-#elif defined(__AVR_ATmega644P__)    || \
-	defined(__AVR_ATmega644PA__)   || \
-	defined(__AVR_ATmega1284P__)
-	#define SERIAL_R_QUALIFIED
-	#define SERIAL_V_QUALIFIED
-	#define SERIAL_PORTS 2
+	//Registers
+	#define _UDR0		UDR
+	#define _UBRR0H		UBRRH
+	#define _UBRR0L		UBRRL
+	#define _UCSR0A		UCSRA
+	#define _UCSR0B		UCSRB
+	#define _UCSR0C		UCSRC
+	
+	//Register Indices
+	#define _U2X0		U2X
+	#define _UCSZ00		UCSZ0
+	#define _UCSZ01		UCSZ1
+	#define _UCSZ02		UCSZ2
+	#define _MPCM0		MPCM
+	#define _UPM00		UPM0
+	#define _UDRE0		UDRE
+	#define _USBS0		USBS
+	#define _RXEN0		RXEN
+	#define _TXEN0		TXEN
+	#define _RXC0		RXC
+
+	#define SERIAL_PORT_COUNT	1
+
+#elif defined(__AVR_ATmega48__)		|| \
+	defined(__AVR_ATmega88__)		|| \
+	defined(__AVR_ATmega168__)		|| \
+	defined(__AVR_ATmega644__)
+	//Registers
+	#define _UDR0		UDR0
+	#define _UBRR0H		UBRR0H
+	#define _UBRR0L		UBRR0L
+	#define _UCSR0A		UCSR0A
+	#define _UCSR0B		UCSR0B
+	#define _UCSR0C		UCSR0C
+
+	//Register Indices
+	#define _U2X0		U2X0
+	#define _UCSZ00		UCSZ00
+	#define _UCSZ01		UCSZ01
+	#define _UCSZ02		UCSZ02
+	#define _MPCM0		MPCM0
+	#define _UPM00		UPM00
+	#define _UDRE0		UDRE0
+	#define _USBS0		USBS0
+	#define _RXEN0		RXEN0
+	#define _TXEN0		TXEN0
+	#define _RXC0		RXC0
+	
+	#define SERIAL_PORT_COUNT	1
+	
+#elif defined(__AVR_ATmega644P__)
+	//TODO
+
+	#define SERIAL_PORT_COUNT	2
 #else
 #error Serial library does not currently support your MCU!  Please verify that MMCU is set correctly.
 #endif
@@ -100,7 +141,7 @@ uint8_t serial_read_s(char *s, uint8_t len);
  * all bytes are written.
  */
 void serial_n_write_s(uint8_t port, char *data);
-void serial_write(char *data);
+void serial_write_s(char *data);
 
 /*
  * Writes a single byte to the serial port.  Implementations MAY block until the 

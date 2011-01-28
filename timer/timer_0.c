@@ -10,6 +10,14 @@
 
 static volatile uint64_t _timer_millis;
 
+#if defined(__AVR_ATtiny25__)   || \
+	defined(__AVR_ATtiny45__)   || \
+	defined(__AVR_ATtiny85__)
+#define TIMER_INTERRUPT_MASK TIMSK
+#else
+#define TIMER_INTERRUPT_MASK TIMSK0
+#endif
+
 /*
  * Initializes the timer, and resets the timer count to 0.  Sets up the ISRs 
  * linked with timer0.
@@ -23,7 +31,7 @@ void timer_init(){
 	OCR0A = F_CPU / 256 / 1000;
 	
 	//Enable compare interrupt
-	TIMSK0 = _BV(OCIE0A);
+	TIMER_INTERRUPT_MASK = _BV(OCIE0A);
 
 	//Reset count variables
 	_timer_millis = 0;
